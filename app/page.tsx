@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { YStack, Text, XStack } from 'tamagui';
+import { YStack, Text, XStack, useTheme } from 'tamagui';
 import { Zap } from 'lucide-react';
 import { SearchBar } from '@/components/SearchBar';
 import { TorrentList } from '@/components/TorrentList';
@@ -11,6 +11,7 @@ export default function Home() {
   const [results, setResults] = useState<TorrentResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const theme = useTheme();
 
   const handleSearch = async (query: string) => {
     setIsLoading(true);
@@ -45,7 +46,7 @@ export default function Home() {
         {/* Header */}
         <YStack alignItems="center" gap="$2" marginBottom="$4">
           <XStack alignItems="center" gap="$3">
-            <Zap size={40} color="var(--blue10)" />
+            <Zap size={40} color={theme.blue10.get()} />
             <Text
               fontSize="$10"
               fontWeight="bold"

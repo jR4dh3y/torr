@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { X, Download, Copy, Check, ArrowUp, ArrowDown, HardDrive, Calendar, Hash, Link2 } from 'lucide-react';
+import { YStack, XStack, Text, Button, ScrollView, useTheme } from 'tamagui';
 import type { TorrentResult } from '@/lib/types';
 
 interface TorrentDetailModalProps {
@@ -12,6 +13,7 @@ interface TorrentDetailModalProps {
 
 export function TorrentDetailModal({ torrent, open, onClose }: TorrentDetailModalProps) {
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const theme = useTheme();
 
   if (!torrent || !open) return null;
 
@@ -23,10 +25,6 @@ export function TorrentDetailModal({ torrent, open, onClose }: TorrentDetailModa
     } catch (err) {
       console.error('Failed to copy:', err);
     }
-  };
-
-  const handleMagnetClick = () => {
-    window.location.href = torrent.magnetLink;
   };
 
   const handleDownloadTorrent = () => {
@@ -48,375 +46,239 @@ export function TorrentDetailModal({ torrent, open, onClose }: TorrentDetailModa
     .map(t => decodeURIComponent(t.split('&')[0]));
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <YStack
+      position="fixed"
+      top={0}
+      left={0}
+      right={0}
+      bottom={0}
+      backgroundColor="rgba(0,0,0,0.8)"
+      zIndex={1000}
+      alignItems="center"
+      justifyContent="center"
+      padding="$4"
+      onPress={onClose}
+      animation="quick"
+      enterStyle={{ opacity: 0 }}
+      exitStyle={{ opacity: 0 }}
+    >
+      <YStack
+        backgroundColor="$background"
+        width="100%"
+        maxWidth={600}
+        maxHeight="90%"
+        borderRadius="$4"
+        overflow="hidden"
+        onPress={(e) => e.stopPropagation()}
+        borderColor="$borderColor"
+        borderWidth={1}
+      >
         {/* Header */}
-        <div className="modal-header">
-          <div className="modal-title-section">
-            <h2 className="modal-title">{torrent.name}</h2>
-            <span className="source-badge">{torrent.source}</span>
-          </div>
-          <button className="close-btn" onClick={onClose}>
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-label">
-              <HardDrive size={14} />
-              <span>Size</span>
-            </div>
-            <div className="stat-value">{torrent.size}</div>
-          </div>
-          <div className="stat-card stat-green">
-            <div className="stat-label">
-              <ArrowUp size={14} />
-              <span>Seeders</span>
-            </div>
-            <div className="stat-value green">{torrent.seeders.toLocaleString()}</div>
-          </div>
-          <div className="stat-card stat-red">
-            <div className="stat-label">
-              <ArrowDown size={14} />
-              <span>Leechers</span>
-            </div>
-            <div className="stat-value red">{torrent.leechers.toLocaleString()}</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-label">
-              <Calendar size={14} />
-              <span>Uploaded</span>
-            </div>
-            <div className="stat-value">{torrent.uploadDate}</div>
-          </div>
-        </div>
-
-        {/* Info Hash */}
-        <div className="info-section">
-          <div className="info-label">
-            <Hash size={14} />
-            <span>Info Hash</span>
-          </div>
-          <div className="info-row">
-            <code className="info-value">{infoHash}</code>
-            <button 
-              className={`copy-btn ${copiedField === 'hash' ? 'copied' : ''}`}
-              onClick={() => handleCopy(infoHash, 'hash')}
+        <XStack
+          padding="$4"
+          borderBottomWidth={1}
+          borderBottomColor="$borderColor"
+          justifyContent="space-between"
+          alignItems="flex-start"
+          gap="$3"
+        >
+          <YStack flex={1} gap="$2">
+            <Text fontSize="$5" fontWeight="bold" color="$color">
+              {torrent.name}
+            </Text>
+            <Text
+              fontSize="$2"
+              color="$blue10"
+              backgroundColor="$blue2"
+              alignSelf="flex-start"
+              paddingHorizontal="$2"
+              paddingVertical="$1"
+              borderRadius="$2"
             >
-              {copiedField === 'hash' ? <Check size={14} /> : <Copy size={14} />}
-            </button>
-          </div>
-        </div>
+              {torrent.source}
+            </Text>
+          </YStack>
+          <Button
+            size="$3"
+            circular
+            icon={<X size={20} />}
+            onPress={onClose}
+            backgroundColor="transparent"
+            hoverStyle={{ backgroundColor: '$gray4' }}
+          />
+        </XStack>
 
-        {/* Magnet Link */}
-        <div className="info-section">
-          <div className="info-label">
-            <Link2 size={14} />
-            <span>Magnet Link</span>
-          </div>
-          <div className="info-row">
-            <code className="info-value truncate">{torrent.magnetLink.substring(0, 60)}...</code>
-            <button 
-              className={`copy-btn ${copiedField === 'magnet' ? 'copied' : ''}`}
-              onClick={() => handleCopy(torrent.magnetLink, 'magnet')}
-            >
-              {copiedField === 'magnet' ? <Check size={14} /> : <Copy size={14} />}
-            </button>
-          </div>
-        </div>
+        <ScrollView>
+          <YStack padding="$4" gap="$6">
+            {/* Stats Grid */}
+            <XStack flexWrap="wrap" gap="$3">
+              <YStack
+                flex={1}
+                minWidth={100}
+                backgroundColor="$gray3"
+                padding="$3"
+                borderRadius="$3"
+                gap="$2"
+              >
+                <XStack gap="$2" alignItems="center">
+                  <HardDrive size={14} color={theme.color.get()} />
+                  <Text fontSize="$2" color="$gray10">Size</Text>
+                </XStack>
+                <Text fontSize="$4" fontWeight="600" color="$color">{torrent.size}</Text>
+              </YStack>
+              
+              <YStack
+                flex={1}
+                minWidth={100}
+                backgroundColor="$green2"
+                padding="$3"
+                borderRadius="$3"
+                gap="$2"
+              >
+                <XStack gap="$2" alignItems="center">
+                  <ArrowUp size={14} color="#166534" />
+                  <Text fontSize="$2" color="#166534">Seeders</Text>
+                </XStack>
+                <Text fontSize="$4" fontWeight="600" color="#166534">{torrent.seeders.toLocaleString()}</Text>
+              </YStack>
 
-        {/* Trackers */}
-        {trackers.length > 0 && (
-          <div className="info-section">
-            <div className="info-label">
-              <span>Trackers ({trackers.length})</span>
-            </div>
-            <div className="trackers-list">
-              {trackers.slice(0, 5).map((tracker, index) => (
-                <code key={index} className="tracker-item">{tracker}</code>
-              ))}
-              {trackers.length > 5 && (
-                <span className="more-trackers">+{trackers.length - 5} more</span>
-              )}
-            </div>
-          </div>
-        )}
+              <YStack
+                flex={1}
+                minWidth={100}
+                backgroundColor="$red2"
+                padding="$3"
+                borderRadius="$3"
+                gap="$2"
+              >
+                <XStack gap="$2" alignItems="center">
+                  <ArrowDown size={14} color="#991b1b" />
+                  <Text fontSize="$2" color="#991b1b">Leechers</Text>
+                </XStack>
+                <Text fontSize="$4" fontWeight="600" color="#991b1b">{torrent.leechers.toLocaleString()}</Text>
+              </YStack>
 
-        {/* Action Buttons */}
-        <div className="action-buttons">
-          <button className="action-btn download" onClick={handleDownloadTorrent}>
-            <Download size={18} />
-            <span>{torrent.torrentUrl ? 'Download .torrent' : 'Download'}</span>
-          </button>
-          <button className="action-btn magnet" onClick={handleMagnetClick}>
-            <Download size={18} />
-            <span>Open Magnet</span>
-          </button>
-          <button 
-            className={`action-btn copy ${copiedField === 'magnet-full' ? 'copied' : ''}`}
-            onClick={() => handleCopy(torrent.magnetLink, 'magnet-full')}
+              <YStack
+                flex={1}
+                minWidth={100}
+                backgroundColor="$gray3"
+                padding="$3"
+                borderRadius="$3"
+                gap="$2"
+              >
+                <XStack gap="$2" alignItems="center">
+                  <Calendar size={14} color={theme.color.get()} />
+                  <Text fontSize="$2" color="$gray10">Uploaded</Text>
+                </XStack>
+                <Text fontSize="$4" fontWeight="600" color="$color">{torrent.uploadDate}</Text>
+              </YStack>
+            </XStack>
+
+            {/* Info Hash */}
+            <YStack gap="$2">
+              <XStack gap="$2" alignItems="center">
+                <Hash size={14} color={theme.color.get()} />
+                <Text fontSize="$3" fontWeight="600" color="$color">Info Hash</Text>
+              </XStack>
+              <XStack
+                backgroundColor="$gray3"
+                padding="$3"
+                borderRadius="$3"
+                justifyContent="space-between"
+                alignItems="center"
+                gap="$3"
+              >
+                <Text fontFamily="$mono" fontSize="$2" color="$gray11" numberOfLines={1} flex={1}>
+                  {infoHash}
+                </Text>
+                <Button
+                  size="$2"
+                  icon={copiedField === 'hash' ? <Check size={14} /> : <Copy size={14} />}
+                  onPress={() => handleCopy(infoHash, 'hash')}
+                  backgroundColor={copiedField === 'hash' ? '$green9' : '$gray5'}
+                  color="white"
+                >
+                  {copiedField === 'hash' ? 'Copied' : 'Copy'}
+                </Button>
+              </XStack>
+            </YStack>
+
+            {/* Magnet Link */}
+            <YStack gap="$2">
+              <XStack gap="$2" alignItems="center">
+                <Link2 size={14} color={theme.color.get()} />
+                <Text fontSize="$3" fontWeight="600" color="$color">Magnet Link</Text>
+              </XStack>
+              <XStack
+                backgroundColor="$gray3"
+                padding="$3"
+                borderRadius="$3"
+                justifyContent="space-between"
+                alignItems="center"
+                gap="$3"
+              >
+                <Text fontFamily="$mono" fontSize="$2" color="$gray11" numberOfLines={1} flex={1}>
+                  {torrent.magnetLink}
+                </Text>
+                <Button
+                  size="$2"
+                  icon={copiedField === 'magnet' ? <Check size={14} /> : <Copy size={14} />}
+                  onPress={() => handleCopy(torrent.magnetLink, 'magnet')}
+                  backgroundColor={copiedField === 'magnet' ? '$green9' : '$gray5'}
+                  color="white"
+                >
+                  {copiedField === 'magnet' ? 'Copied' : 'Copy'}
+                </Button>
+              </XStack>
+            </YStack>
+
+            {/* Trackers */}
+            {trackers.length > 0 && (
+              <YStack gap="$2">
+                <Text fontSize="$3" fontWeight="600" color="$color">Trackers ({trackers.length})</Text>
+                <YStack backgroundColor="$gray3" borderRadius="$3" overflow="hidden">
+                  {trackers.map((tracker, i) => (
+                    <YStack
+                      key={i}
+                      padding="$3"
+                      borderBottomWidth={i < trackers.length - 1 ? 1 : 0}
+                      borderBottomColor="$borderColor"
+                    >
+                      <Text fontSize="$2" color="$gray11" numberOfLines={1}>
+                        {tracker}
+                      </Text>
+                    </YStack>
+                  ))}
+                </YStack>
+              </YStack>
+            )}
+          </YStack>
+        </ScrollView>
+
+        {/* Footer Actions */}
+        <XStack padding="$4" gap="$3" borderTopWidth={1} borderTopColor="$borderColor">
+          <Button
+            flex={1}
+            size="$4"
+            backgroundColor="$blue10"
+            color="white"
+            icon={<Download size={16} />}
+            onPress={handleDownloadTorrent}
+            hoverStyle={{ opacity: 0.9 }}
           >
-            {copiedField === 'magnet-full' ? <Check size={18} /> : <Copy size={18} />}
-            <span>{copiedField === 'magnet-full' ? 'Copied!' : 'Copy Magnet'}</span>
-          </button>
-        </div>
-      </div>
-
-      <style jsx>{`
-        .modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.7);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-          padding: 20px;
-          backdrop-filter: blur(4px);
-        }
-
-        .modal-content {
-          background: var(--background, #1a1a1a);
-          border-radius: 16px;
-          max-width: 600px;
-          width: 100%;
-          max-height: 90vh;
-          overflow-y: auto;
-          padding: 24px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .modal-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          gap: 16px;
-          margin-bottom: 20px;
-        }
-
-        .modal-title-section {
-          flex: 1;
-        }
-
-        .modal-title {
-          font-size: 18px;
-          font-weight: 600;
-          color: var(--color, white);
-          margin: 0 0 8px 0;
-          line-height: 1.4;
-          word-break: break-word;
-        }
-
-        .source-badge {
-          display: inline-block;
-          background: rgba(59, 130, 246, 0.2);
-          color: #60a5fa;
-          padding: 4px 8px;
-          border-radius: 6px;
-          font-size: 12px;
-          font-weight: 500;
-        }
-
-        .close-btn {
-          background: rgba(255, 255, 255, 0.1);
-          border: none;
-          border-radius: 8px;
-          padding: 8px;
-          cursor: pointer;
-          color: var(--color, white);
-          transition: background 0.2s;
-        }
-
-        .close-btn:hover {
-          background: rgba(255, 255, 255, 0.2);
-        }
-
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 12px;
-          margin-bottom: 20px;
-        }
-
-        .stat-card {
-          background: rgba(255, 255, 255, 0.05);
-          padding: 12px;
-          border-radius: 10px;
-        }
-
-        .stat-card.stat-green {
-          background: rgba(34, 197, 94, 0.1);
-        }
-
-        .stat-card.stat-red {
-          background: rgba(239, 68, 68, 0.1);
-        }
-
-        .stat-label {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 12px;
-          margin-bottom: 4px;
-        }
-
-        .stat-value {
-          font-size: 18px;
-          font-weight: 600;
-          color: var(--color, white);
-        }
-
-        .stat-value.green {
-          color: #22c55e;
-        }
-
-        .stat-value.red {
-          color: #ef4444;
-        }
-
-        .info-section {
-          margin-bottom: 16px;
-        }
-
-        .info-label {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          color: rgba(255, 255, 255, 0.6);
-          font-size: 13px;
-          margin-bottom: 8px;
-        }
-
-        .info-row {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          background: rgba(255, 255, 255, 0.05);
-          padding: 10px 12px;
-          border-radius: 8px;
-        }
-
-        .info-value {
-          flex: 1;
-          font-family: monospace;
-          font-size: 12px;
-          color: var(--color, white);
-          word-break: break-all;
-        }
-
-        .info-value.truncate {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .copy-btn {
-          background: rgba(255, 255, 255, 0.1);
-          border: none;
-          border-radius: 6px;
-          padding: 6px;
-          cursor: pointer;
-          color: var(--color, white);
-          transition: all 0.2s;
-          flex-shrink: 0;
-        }
-
-        .copy-btn:hover {
-          background: rgba(255, 255, 255, 0.2);
-        }
-
-        .copy-btn.copied {
-          background: #22c55e;
-        }
-
-        .trackers-list {
-          background: rgba(255, 255, 255, 0.05);
-          padding: 10px 12px;
-          border-radius: 8px;
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-        }
-
-        .tracker-item {
-          font-family: monospace;
-          font-size: 11px;
-          color: rgba(255, 255, 255, 0.7);
-          word-break: break-all;
-        }
-
-        .more-trackers {
-          font-size: 12px;
-          color: rgba(255, 255, 255, 0.5);
-          margin-top: 4px;
-        }
-
-        .action-buttons {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          margin-top: 20px;
-        }
-
-        .action-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          padding: 14px 20px;
-          border: none;
-          border-radius: 10px;
-          font-size: 15px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s;
-          color: white;
-        }
-
-        .action-btn.download {
-          background: #22c55e;
-        }
-
-        .action-btn.download:hover {
-          background: #16a34a;
-        }
-
-        .action-btn.magnet {
-          background: #a855f7;
-        }
-
-        .action-btn.magnet:hover {
-          background: #9333ea;
-        }
-
-        .action-btn.copy {
-          background: #3b82f6;
-        }
-
-        .action-btn.copy:hover {
-          background: #2563eb;
-        }
-
-        .action-btn.copy.copied {
-          background: #22c55e;
-        }
-
-        @media (max-width: 480px) {
-          .stats-grid {
-            grid-template-columns: 1fr 1fr;
-          }
-          
-          .modal-content {
-            padding: 16px;
-          }
-        }
-      `}</style>
-    </div>
+            Download Torrent
+          </Button>
+          <Button
+            flex={1}
+            size="$4"
+            backgroundColor="$gray5"
+            color="$color"
+            icon={<Copy size={16} />}
+            onPress={() => handleCopy(torrent.magnetLink, 'magnet-btn')}
+          >
+            Copy Magnet
+          </Button>
+        </XStack>
+      </YStack>
+    </YStack>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { Download, Magnet, ArrowUp, ArrowDown, HardDrive, Calendar, ChevronRight } from 'lucide-react';
+import { YStack, XStack, Text, Button, useTheme } from 'tamagui';
 import type { TorrentResult } from '@/lib/types';
 
 interface TorrentCardProps {
@@ -9,13 +10,15 @@ interface TorrentCardProps {
 }
 
 export function TorrentCard({ torrent, onPress }: TorrentCardProps) {
-  const handleMagnetClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const theme = useTheme();
+  
+  const handleMagnetClick = (e: any) => {
+    e?.stopPropagation?.();
     window.location.href = torrent.magnetLink;
   };
 
-  const handleDownloadClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDownloadClick = (e: any) => {
+    e?.stopPropagation?.();
     if (torrent.torrentUrl) {
       window.open(torrent.torrentUrl, '_blank');
     } else {
@@ -24,176 +27,92 @@ export function TorrentCard({ torrent, onPress }: TorrentCardProps) {
   };
 
   return (
-    <div className="torrent-card" onClick={onPress}>
+    <YStack
+      backgroundColor="$background"
+      borderColor="$borderColor"
+      borderWidth={1}
+      borderRadius="$4"
+      padding="$4"
+      cursor="pointer"
+      hoverStyle={{
+        borderColor: '$blue10',
+        y: -1,
+      }}
+      pressStyle={{
+        scale: 0.99,
+      }}
+      onPress={onPress}
+      animation="quick"
+    >
       {/* Title and Source */}
-      <div className="card-header">
-        <h3 className="torrent-name">{torrent.name}</h3>
-        <span className="source-badge">{torrent.source}</span>
-      </div>
+      <XStack justifyContent="space-between" alignItems="flex-start" gap="$3" marginBottom="$3">
+        <Text
+          fontSize="$4"
+          fontWeight="600"
+          color="$color"
+          lineHeight="$4"
+          flex={1}
+        >
+          {torrent.name}
+        </Text>
+        <Text
+          fontSize="$2"
+          color="$blue10"
+          backgroundColor="$blue2"
+          paddingHorizontal="$2"
+          paddingVertical="$1"
+          borderRadius="$2"
+          overflow="hidden"
+        >
+          {torrent.source}
+        </Text>
+      </XStack>
 
       {/* Stats Row */}
-      <div className="stats-row">
-        <div className="stat">
-          <HardDrive size={14} />
-          <span>{torrent.size}</span>
-        </div>
-        <div className="stat seeders">
-          <ArrowUp size={14} />
-          <span>{torrent.seeders.toLocaleString()}</span>
-        </div>
-        <div className="stat leechers">
-          <ArrowDown size={14} />
-          <span>{torrent.leechers.toLocaleString()}</span>
-        </div>
-        <div className="stat">
-          <Calendar size={14} />
-          <span>{torrent.uploadDate}</span>
-        </div>
-      </div>
+      <XStack gap="$4" flexWrap="wrap" marginBottom="$4">
+        <XStack gap="$2" alignItems="center">
+          <HardDrive size={14} color={theme.color.get()} />
+          <Text fontSize="$3" color="$color">{torrent.size}</Text>
+        </XStack>
+        <XStack gap="$2" alignItems="center">
+          <ArrowUp size={14} color="#22c55e" />
+          <Text fontSize="$3" color="#22c55e">{torrent.seeders.toLocaleString()}</Text>
+        </XStack>
+        <XStack gap="$2" alignItems="center">
+          <ArrowDown size={14} color="#ef4444" />
+          <Text fontSize="$3" color="#ef4444">{torrent.leechers.toLocaleString()}</Text>
+        </XStack>
+        <XStack gap="$2" alignItems="center">
+          <Calendar size={14} color={theme.color.get()} />
+          <Text fontSize="$3" color="$color">{torrent.uploadDate}</Text>
+        </XStack>
+      </XStack>
 
       {/* Action Buttons */}
-      <div className="actions-row">
-        <button className="action-btn download" onClick={handleDownloadClick}>
-          <Download size={14} />
-          <span>Download</span>
-        </button>
-        <button className="action-btn magnet" onClick={handleMagnetClick}>
-          <Magnet size={14} />
-          <span>Magnet</span>
-        </button>
-        <ChevronRight size={18} className="chevron" />
-      </div>
-
-      <style jsx>{`
-        .torrent-card {
-          background: var(--background, #1a1a1a);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
-          padding: 16px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-
-        .torrent-card:hover {
-          border-color: #3b82f6;
-          transform: translateY(-1px);
-        }
-
-        .torrent-card:active {
-          transform: scale(0.99);
-        }
-
-        .card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          gap: 12px;
-          margin-bottom: 12px;
-        }
-
-        .torrent-name {
-          font-size: 15px;
-          font-weight: 600;
-          color: var(--color, white);
-          margin: 0;
-          line-height: 1.4;
-          flex: 1;
-          word-break: break-word;
-        }
-
-        .source-badge {
-          background: rgba(59, 130, 246, 0.2);
-          color: #60a5fa;
-          padding: 4px 8px;
-          border-radius: 6px;
-          font-size: 11px;
-          font-weight: 500;
-          flex-shrink: 0;
-        }
-
-        .stats-row {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 16px;
-          margin-bottom: 12px;
-        }
-
-        .stat {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 13px;
-          color: rgba(255, 255, 255, 0.6);
-        }
-
-        .stat.seeders {
-          color: #22c55e;
-          font-weight: 600;
-        }
-
-        .stat.leechers {
-          color: #ef4444;
-        }
-
-        .actions-row {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .action-btn {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          padding: 8px 14px;
-          border: none;
-          border-radius: 8px;
-          font-size: 13px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: all 0.2s;
-          color: white;
-          flex: 1;
-          justify-content: center;
-        }
-
-        .action-btn.download {
-          background: #22c55e;
-        }
-
-        .action-btn.download:hover {
-          background: #16a34a;
-        }
-
-        .action-btn.magnet {
-          background: #a855f7;
-        }
-
-        .action-btn.magnet:hover {
-          background: #9333ea;
-        }
-
-        .chevron {
-          color: rgba(255, 255, 255, 0.3);
-          margin-left: auto;
-          flex-shrink: 0;
-        }
-
-        @media (max-width: 480px) {
-          .stats-row {
-            gap: 12px;
-          }
-          
-          .action-btn span {
-            display: none;
-          }
-          
-          .action-btn {
-            flex: 0;
-            padding: 8px;
-          }
-        }
-      `}</style>
-    </div>
+      <XStack gap="$2" alignItems="center">
+        <Button
+          size="$3"
+          backgroundColor="$blue10"
+          color="white"
+          icon={<Download size={14} color="white" />}
+          onPress={handleDownloadClick}
+          hoverStyle={{ opacity: 0.9 }}
+        >
+          Download
+        </Button>
+        <Button
+          size="$3"
+          backgroundColor="$gray5"
+          color="$color"
+          icon={<Magnet size={14} color={theme.color.get()} />}
+          onPress={handleMagnetClick}
+          hoverStyle={{ backgroundColor: '$gray6' }}
+        >
+          Magnet
+        </Button>
+        <YStack flex={1} />
+        <ChevronRight size={18} color={theme.color.get()} style={{ opacity: 0.5 }} />
+      </XStack>
+    </YStack>
   );
 }
