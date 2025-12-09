@@ -47,7 +47,7 @@ export function TorrentDetailModal({ torrent, open, onClose }: TorrentDetailModa
 
   return (
     <YStack
-      position="fixed"
+      position={"fixed" as any}
       top={0}
       left={0}
       right={0}

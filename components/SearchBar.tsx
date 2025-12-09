@@ -12,7 +12,7 @@ interface SearchBarProps {
 export function SearchBar({ onSearch, isLoading }: SearchBarProps) {
   const [query, setQuery] = useState('');
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = (e: any) => {
     if (e.key === 'Enter') {
       handleSubmit();
     }

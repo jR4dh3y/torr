@@ -32,16 +32,16 @@ export default function Home() {
   return (
     <YStack
       flex={1}
-      minHeight="100vh"
-      backgroundColor="$background"
-      padding="$4"
+      style={{ minHeight: '100vh' }}
+      background="$background"
+      p="$4"
     >
       <YStack
-        maxWidth={900}
+        style={{ maxWidth: 900 }}
         width="100%"
-        marginHorizontal="auto"
+        mx="auto"
         gap="$6"
-        paddingVertical="$6"
+        py="$6"
       >
         {/* Header */}
         <YStack alignItems="center" gap="$2" marginBottom="$4">
