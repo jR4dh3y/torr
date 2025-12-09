@@ -9,9 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@tamagui/config": "^1.139.2",
+    "@tamagui/core": "^1.139.2",
+    "@tamagui/next-plugin": "^1.139.2",
+    "lucide-react": "^0.556.0",
     "next": "16.0.8",
     "react": "19.2.1",
-    "react-dom": "19.2.1"
+    "react-dom": "19.2.1",
+    "tamagui": "^1.139.2"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
